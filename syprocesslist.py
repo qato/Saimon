@@ -57,7 +57,7 @@ class SyProcessListStat:
 		
 	def get_pstat_io(self, pid, detail):
 		fname='/proc/%d/io' % pid
-		if os.path.exists(fname):
+		if os.path.exists(fname) and os.access(fname, os.R_OK):
 			fin = open(fname, 'r')
 			for line in fin:
 				line = line.strip()
@@ -145,7 +145,7 @@ class SyProcessListStat:
 		pid=detail['pid']
 
 		fname='/proc/%d/io' % pid
-		if os.path.exists(fname):
+		if os.path.exists(fname) and os.access(fname, os.R_OK):
 			fin = open(fname, 'r')
 			for line in fin:
 				line = line.strip()

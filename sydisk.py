@@ -100,7 +100,7 @@ class Disk:
 	def check(self):
 		sys_delta_time=getSysDeltaTime()
 		fname='/proc/diskstats'
-		if os.path.exists(fname):
+		if os.path.exists(fname) and os.access(fname, os.R_OK):
 			fin = open(fname, 'r')
 			for line in fin:
 				line = line.strip()

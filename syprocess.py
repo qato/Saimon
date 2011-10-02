@@ -95,7 +95,7 @@ class Process:
 		self.__pid=id
 		self.__prev_wchar=0
 		fname='/proc/%d/cmdline' % self.__pid
-		if os.path.exists(fname):
+		if os.path.exists(fname) and os.access(fname, os.R_OK):
 			fin = open(fname, 'r')
 			self.__cmdline=fin.readline()
 			fin.close()	
@@ -103,7 +103,7 @@ class Process:
 	def check_stat(self):
 
 		fname='/proc/%d/stat' % self.__pid
-		if os.path.exists(fname):
+		if os.path.exists(fname) and os.access(fname, os.R_OK):
 			fin = open(fname, 'r')
 			line=fin.readline()
 			fin.close()	
@@ -168,7 +168,7 @@ class Process:
 	def check_io(self):
 
 		fname='/proc/%d/io' % self.__pid
-		if os.path.exists(fname):
+		if os.path.exists(fname) and os.access(fname, os.R_OK):
 			fin = open(fname, 'r')
 			for line in fin:
 				line = line.strip()
