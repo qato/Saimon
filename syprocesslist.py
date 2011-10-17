@@ -165,40 +165,41 @@ class SyProcessListStat:
 
 		pid=detail['pid']
 		fname='/proc/%d/stat' % pid
-		fin = open(fname, 'r')
-		line=fin.readline()
-		fin.close()	
-		line = line.strip()
-		field = line.split()
+		if os.path.exists(fname) and os.access(fname, os.R_OK):
+			fin = open(fname, 'r')
+			line=fin.readline()
+			fin.close()	
+			line = line.strip()
+			field = line.split()
 
-		prev_utime = float(detail['utime'])
-		prev_stime = float(detail['stime'])
+			prev_utime = float(detail['utime'])
+			prev_stime = float(detail['stime'])
 
-		detail['state']=field[2]
-		detail['utime']=field[13]
-		detail['stime']=field[14]
-		detail['cutime']=field[15]
-		detail['cstime']=field[16]
-		detail['priority']=field[17]
-		detail['nice']=field[18]
-		detail['num_threads']=field[19]
-		detail['vsize']=field[22]
-		detail['rss']=int(field[23]) * self.__page_size
-		detail['task_cpu']=field[38]
-		detail['rt_priority']=field[39]
-		if len(field)>40:
-			detail['policy']=field[40]
-			detail['blkio_ticks']=float(field[41])
-			detail['gtime']=field[42]
-			detail['cgtime']=field[43]
+			detail['state']=field[2]
+			detail['utime']=field[13]
+			detail['stime']=field[14]
+			detail['cutime']=field[15]
+			detail['cstime']=field[16]
+			detail['priority']=field[17]
+			detail['nice']=field[18]
+			detail['num_threads']=field[19]
+			detail['vsize']=field[22]
+			detail['rss']=int(field[23]) * self.__page_size
+			detail['task_cpu']=field[38]
+			detail['rt_priority']=field[39]
+			if len(field)>40:
+				detail['policy']=field[40]
+				detail['blkio_ticks']=float(field[41])
+				detail['gtime']=field[42]
+				detail['cgtime']=field[43]
 
-		delta = float(getSysDeltaTime())
-		if delta>0:
-			detail['perc_cpu_usr']=float(float(detail['utime']) - prev_utime)/delta*100
-			detail['perc_cpu_sys']=float(float(detail['stime']) - prev_stime)/delta*100
-			detail['cpu']=detail['perc_cpu_usr']+detail['perc_cpu_sys']
+			delta = float(getSysDeltaTime())
+			if delta>0:
+				detail['perc_cpu_usr']=float(float(detail['utime']) - prev_utime)/delta*100
+				detail['perc_cpu_sys']=float(float(detail['stime']) - prev_stime)/delta*100
+				detail['cpu']=detail['perc_cpu_usr']+detail['perc_cpu_sys']
 
-		self.update_list_stat(detail['state'])
+			self.update_list_stat(detail['state'])
 
 	def check(self):
 		pids=set()
