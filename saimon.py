@@ -135,7 +135,7 @@ def show_disk_stat(myscreen, mywin):
 	xspace=x-pos_sys_bar
 	if xspace > 0:
 		kspace=float(float(xspace)/100)
-		s_used		= 'D'*int(kspace*perc)
+		s_used		= 'D'*int(kspace*perc*num)
 		s_null		= '-'*(xspace-len(s_used))
 		mywin.addstr(dsk_y, 1, s_disk[:x-2])
 		mywin.move(dsk_y, pos_sys_bar-1)
