@@ -50,7 +50,7 @@ def split(str, sep):
 		return str, None
 	return None, None
 
-def getTable(content, sep = None, label = None, line_norm_fn = None): 
+def getTable(content, sep = None, label = None, line_norm_fn = None, filter = None): 
 	result = dict()
 	if (content):
 		cnt = 0
@@ -58,6 +58,9 @@ def getTable(content, sep = None, label = None, line_norm_fn = None):
 			line = normalizeLine(line_norm_fn, line)
 			cols = line.split(sep)
 			if (len(cols)>1):
+				if (filter):
+					v = cols[filter['col']]
+					if (not v in filter['values']): continue
 				if (label):
 					result[cnt] = arrayToDict(cols, label)
 				else:

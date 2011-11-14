@@ -18,6 +18,13 @@
 #       Copyright (C) 2011  qato@qatoproject.it
 #       
 
+import time
+
 def perc(value, total):
 	if (total<=0): return 0.0
-	return float(float(100.0/total)*value)
+	result = float(float(100.0/total)*value)
+	if result>100: result=100
+	return result
+
+def get_msec():
+	return int(round(time.time() * 1000))

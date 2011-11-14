@@ -56,15 +56,15 @@ class Process:
 		self.__fio.setUpdateMode(UpdateMode.DICTIONARY)
 		self.__fio.setSeparator(':')
 		
-		self.__property.add('cpu_usr', self.__callbackCpu)
-		self.__property.add('cpu_sys', self.__callbackCpu)
-		self.__property.add('io_cr', self.__callbackCpu)
-		self.__property.add('io_cw', self.__callbackCpu)
-		self.__property.add('io_br', self.__callbackCpu)
-		self.__property.add('io_bw', self.__callbackCpu)
+		self.__property.add('cpu_usr', self.__property_callback)
+		self.__property.add('cpu_sys', self.__property_callback)
+		self.__property.add('io_cr', self.__property_callback)
+		self.__property.add('io_cw', self.__property_callback)
+		self.__property.add('io_br', self.__property_callback)
+		self.__property.add('io_bw', self.__property_callback)
 		self.__property.add('delta', None)
 
-	def __callbackCpu(self, property):
+	def __property_callback(self, property):
 		if (property[0:2]=='io'):
 			cr, cw, br, bw = self.__calc_io(self.__fio.getCurrent(), self.__fio.getPrevious(), self.__property.get('delta'))
 			self.__property.set('io_cr', cr)

@@ -29,7 +29,6 @@ from property import Property
 class Vm:
 
 	__stat_cpu_lbl = ['user', 'nice', 'system', 'idle', 'iowait', 'irq', 'softirq', 'steal', 'guest']
-	__cpu_perc = dict()
 	__elapsed = -1
 	__property = None
 
@@ -51,8 +50,7 @@ class Vm:
 			curr = self.__calc_cpu_time(self.__fstat.getCurrent()['cpu'])
 			self.__property.set('cpu_elapsed', curr-prev)
 		if (property=='cpu_perc'):
-			self.__calc_cpu_perc(self.__property.get('cpu_elapsed'), self.__fstat.getCurrent()['cpu'].split(), self.__fstat.getPrevious()['cpu'].split())
-			self.__property.set('cpu_perc', self.__cpu_perc)
+			self.__property.set('cpu_perc', self.__calc_cpu_perc(self.__property.get('cpu_elapsed'), self.__fstat.getCurrent()['cpu'].split(), self.__fstat.getPrevious()['cpu'].split()))
 		if (property=='cpu_details'):
 			curr = self.__fstat.getCurrent()
 			self.__property.set('cpu_details', reader.normalization.arrayToDict(curr['cpu'].split(), self.__stat_cpu_lbl))
@@ -66,10 +64,11 @@ class Vm:
 		return sum
 	
 	def __calc_cpu_perc(self, total, curr, prev):
-		if (len(curr)!=len(prev) or len(curr)!=len(self.__stat_cpu_lbl)): return
-		result = dict()
+		cpu_perc = {}
+		if (len(curr)!=len(prev) or len(curr)!=len(self.__stat_cpu_lbl)): return cpu_perc
 		for i in range(0,len(curr)):
-			self.__cpu_perc[self.__stat_cpu_lbl[i]] = utils.perc(int(curr[i]) - int(prev[i]), total)
+			cpu_perc[self.__stat_cpu_lbl[i]] = utils.perc(int(curr[i]) - int(prev[i]), total)
+		return cpu_perc
 	
 	# getter/setter
 	def getElapsed(self): 

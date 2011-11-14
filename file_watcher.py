@@ -39,6 +39,7 @@ class FileWatcher:
 	__upd_mode = UpdateMode.TABLE
 	__values_invalid = False
 	__line_norm_fn = None
+	__filter = None
 	
 	def __init__(self, fname):
 		self.__fname = fname
@@ -64,7 +65,7 @@ class FileWatcher:
 		self.__values_invalid = False
 		
 	def __getTable(self):
-		self.__current = reader.normalization.getTable(self.__current_content, self.__sep, self.__label, self.__line_norm_fn)
+		self.__current = reader.normalization.getTable(self.__current_content, self.__sep, self.__label, self.__line_norm_fn, self.__filter)
 
 	def __getDictionary(self):
 		self.__current = reader.normalization.getDictionary(self.__current_content, self.__sep, self.__line_norm_fn)
@@ -90,3 +91,6 @@ class FileWatcher:
 	
 	def setUpdateMode(self, mode):
 		self.__upd_mode = mode
+	
+	def setFilter(self, filter):
+		self.__filter = filter
