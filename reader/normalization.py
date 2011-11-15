@@ -68,7 +68,7 @@ def getTable(content, sep = None, label = None, line_norm_fn = None, filter = No
 				cnt = cnt + 1
 	return result
 
-def getDictionary2(content, sep = ':', line_norm_fn = None):
+def getDictionary(content, sep = ':', line_norm_fn = None):
 	result = dict()
 	if (content):
 		for line in content.split('\n'):
@@ -78,7 +78,7 @@ def getDictionary2(content, sep = ':', line_norm_fn = None):
 				result[cols[0].strip()] = ' '.join(cols[1:]).strip()
 	return result
 
-def getDictionary(content, sep = ':', line_norm_fn = None):
+def getDictionary2(content, sep = ':', line_norm_fn = None):
 	result = dict()
 	if (content):
 		for line in content.split('\n'):

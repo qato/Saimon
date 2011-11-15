@@ -28,3 +28,16 @@ def perc(value, total):
 
 def get_msec():
 	return int(round(time.time() * 1000))
+
+def calc_delta(curr, prev):
+	delta = {}
+	if prev:
+		for (k,v) in curr.iteritems():
+			v_prev = prev[k]
+			if (type(v_prev)==type('')):
+				v_prev=int(v_prev)
+			if (type(v)==type('')):
+				v=int(v)
+			if (type(v)==type(0) and type(v_prev)==type(0)):
+				delta[k]=v-v_prev
+	return delta

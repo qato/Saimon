@@ -48,6 +48,7 @@ class ProcFileReader:
 		line = None
 		if (self.__fin):
 			line = self.__fin.readline()
+			if line[-1]=='\n': line=line[:-1]
 			if (strip):
 				line = self.__normalizeLine(line.strip())
 		return line

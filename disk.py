@@ -38,7 +38,6 @@ class Disk:
 		disk = []
 		self.__property = Property()
 		for dirname in os.listdir('/sys/block'):
-			#for dirdev in os.listdir(os.path.join('/sys/block', dirname)):
 			for dirdev in os.listdir('/sys/block/' + dirname):
 					if (dirdev=='device'):
 						disk.append(dirname)
@@ -47,7 +46,6 @@ class Disk:
 		self.__fdiskstats = FileWatcher('/proc/diskstats')
 		self.__fdiskstats.setLabel(self.__diskstat_lbl)
 		self.__fdiskstats.setUpdateMode(UpdateMode.TABLE)
-		print {'col': 2, 'values': disk}
 		self.__fdiskstats.setFilter({'col': 2, 'values': disk})
 		
 		self.__property.add('disk_perc', self.__property_callback)
@@ -61,10 +59,13 @@ class Disk:
 	def __property_callback(self, property):
 		curr = self.__calc_disk_usage(self.__fdiskstats.getCurrent())
 		prev = self.__calc_disk_usage(self.__fdiskstats.getPrevious())
-		self.__property.set('disk_perc', utils.perc((curr-prev)/self.__disks, self.__elapsed ))
+		self.__property.set('disk_perc', utils.perc((curr-prev), self.__elapsed ))
 	
 	def getDiskPerc(self):
 		return self.__property.get('disk_perc')
+	
+	def getDiskNum(self):
+		return self.__disks
 
 	def update(self):
 		self.__fdiskstats.update()
