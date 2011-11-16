@@ -34,10 +34,23 @@ def calc_delta(curr, prev):
 	if prev:
 		for (k,v) in curr.iteritems():
 			v_prev = prev[k]
-			if (type(v_prev)==type('')):
+			if (type(v_prev)==type('') and v_prev.isdigit()):
 				v_prev=int(v_prev)
-			if (type(v)==type('')):
+			if (type(v)==type('') and v.isdigit()):
 				v=int(v)
 			if (type(v)==type(0) and type(v_prev)==type(0)):
 				delta[k]=v-v_prev
 	return delta
+
+def convert_values_to_byte(values):
+	result = {}
+	for (k,v) in values.iteritems():
+		if (type(v)==type('')): 
+			if (v[-3:]==' kB'):
+				v=int(v[0:-3])*1024
+			else:
+				if (type(v)==type('') and v.isdigit()):
+					v=int(v)
+		result[k]=v
+	return result
+

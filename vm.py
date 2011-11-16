@@ -114,20 +114,9 @@ class Vm:
 			
 		self.__property.set('avg', curr)
 
-	def __convert_to_byte(self, values):
-		result = {}
-		for (k,v) in values.iteritems():
-			if (v[-3:]==' kB'):
-				v=int(v[0:-3])*1024
-			else:
-				if (type(v)==type('') and v.isdigit()):
-					v=int(v)
-			result[k]=v
-		return result
-
 	def __callbackMeminfo(self, property):
-		curr = self.__convert_to_byte(self.__fmeminfo.getCurrent())
-		prev = self.__convert_to_byte(self.__fmeminfo.getPrevious())
+		curr = utils.convert_values_to_byte(self.__fmeminfo.getCurrent())
+		prev = utils.convert_values_to_byte(self.__fmeminfo.getPrevious())
 		self.__property.set('meminfo', curr)
 		self.__property.set('delta_meminfo', utils.calc_delta(curr, prev))
 

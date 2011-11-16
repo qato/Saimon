@@ -58,37 +58,51 @@ class Process:
 		
 		self.__property.add('cpu_usr', self.__property_callback)
 		self.__property.add('cpu_sys', self.__property_callback)
-		self.__property.add('io_cr', self.__property_callback)
-		self.__property.add('io_cw', self.__property_callback)
-		self.__property.add('io_br', self.__property_callback)
-		self.__property.add('io_bw', self.__property_callback)
+		self.__property.add('cpu_delta', self.__property_callback)
+		self.__property.add('status', self.__property_callback)
+		self.__property.add('io', self.__property_callback)
+		self.__property.add('io_delta', self.__property_callback)
 		self.__property.add('delta', None)
 
 	def __property_callback(self, property):
 		if (property[0:2]=='io'):
-			cr, cw, br, bw = self.__calc_io(self.__fio.getCurrent(), self.__fio.getPrevious(), self.__property.get('delta'))
-			self.__property.set('io_cr', cr)
-			self.__property.set('io_cw', cw)
-			self.__property.set('io_br', br)
-			self.__property.set('io_bw', bw)
+			curr, prev = self.__fio.getCurrent(), self.__fio.getPrevious()
+			self.__property.set('io_delta', self.__calc_delta(curr, prev))
+			self.__property.set('io', utils.convert_values_to_byte(curr))
 		if (property[0:3]=='cpu'):
-			usr, sys = self.__calc_cpu(self.__fstat.getCurrent(), self.__fstat.getPrevious(), self.__property.get('delta'))
+			curr, prev = self.__fstat.getCurrent(), self.__fstat.getPrevious()
+			usr, sys = self.__calc_cpu(curr, prev, self.__property.get('delta'))
 			self.__property.set('cpu_usr', usr)
 			self.__property.set('cpu_sys', sys)
+			self.__property.set('cpu_delta', self.__calc_delta(curr[0], prev[0]))
+			self.__property.set('status', utils.convert_values_to_byte(curr[0]))
 		
 #	def __del__(self):
 #		print "kill %d" % self.__pid
 
+	# getter/setter
 	def getCpuDetails(self): return { "usr" : self.__property.get('cpu_usr'), "sys" : self.__property.get('cpu_sys') }
 	def getCpu(self): return self.__property.get('cpu_usr') + self.__property.get('cpu_sys')
 	
-	def getIODetails(self): 
-		return { 	"cr" : self.__property.get('io_cr'), "cw" : self.__property.get('io_cw'), \
-					"br" : self.__property.get('io_br'), "bw" : self.__property.get('io_bw') \
-				}
-	def getIO(self): return self.__property.get('io_cw') + self.__property.get('io_cr')
 	def getPID(self): return self.__pid
-	
+
+	def getStatus(self): return self.__property.get('status')
+	def getStatusDelta(self): return self.__property.get('status_delta')
+
+	def getIO(self): return self.__property.get('io')
+	def getIOSysCall(self): 
+		v = self.__property.get('io_delta')
+		return v['syscr'] + v['syscw']
+	def getIOBytes(self): 
+		v = self.__property.get('io_delta')
+		return v['rchar'] + v['wchar']
+	def getIODelta(self): return self.__property.get('io_delta')
+
+	# private methods	
+	def __calc_delta(self, curr, prev):
+		curr = utils.convert_values_to_byte(curr)
+		prev = utils.convert_values_to_byte(prev)
+		return utils.calc_delta(curr, prev)
 	
 	def __calc_cpu(self, curr, prev, delta):
 		if (not curr or not prev or not delta): return 0,0
@@ -96,13 +110,6 @@ class Process:
 			return utils.perc(int(curr[0]['utime']) - int(prev[0]['utime']), delta), utils.perc(int(curr[0]['stime']) - int(prev[0]['stime']), delta)
 		return 0,0
 	
-	def __calc_io(self, curr, prev, delta):
-		if (not curr or not prev or not delta): return 0,0,0,0
-		if (delta > 0):
-			return int(curr['syscr']) - int(prev['syscr']), int(curr['syscw']) - int(prev['syscw']), \
-					int(curr['rchar']) - int(prev['rchar']), int(curr['wchar']) - int(prev['wchar'])
-		return 0,0,0,0
-
 	def update(self):
 		# stat
 		self.__fstat.update()
