@@ -19,6 +19,8 @@
 #       
 
 import time
+import pwd
+import grp
 
 def perc(value, total):
 	if (total<=0): return 0.0
@@ -29,10 +31,13 @@ def perc(value, total):
 def get_msec():
 	return int(round(time.time() * 1000))
 
-def calc_delta(curr, prev):
+def calc_delta(curr, prev, skip = []):
 	delta = {}
 	if prev:
 		for (k,v) in curr.iteritems():
+			if (k in skip):
+				delta[k] = v
+				continue
 			v_prev = prev[k]
 			if (type(v_prev)==type('') and v_prev.isdigit()):
 				v_prev=int(v_prev)
@@ -42,10 +47,13 @@ def calc_delta(curr, prev):
 				delta[k]=v-v_prev
 	return delta
 
-def convert_values_to_byte(values):
+def convert_values_to_byte(values, skip = {}):
 	result = {}
 	if values:
 		for (k,v) in values.iteritems():
+			if (k in skip):
+				result[k]=v
+				continue
 			if (type(v)==type('')): 
 				if (v[-3:]==' kB'):
 					v=int(v[0:-3])*1024
@@ -58,4 +66,23 @@ def convert_values_to_byte(values):
 def copy_if_exist(dest, orig):
 	for k in dest.keys():
 		if k in orig: dest[k] = orig[k]
-			
+
+def get_username(uid):
+	result=''
+	try:
+		u = pwd.getpwuid(uid)
+	except KeyError:
+		result = '<%d>' % uid
+	else:
+		result = u.pw_name
+	return result
+	
+def get_groupname(gid):
+	result=''
+	try:
+		g = grp.getgrgid(gid)
+	except KeyError:
+		result = '<%d>' % gid
+	else:
+		result = g.gr_name
+	return result
