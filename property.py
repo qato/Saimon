@@ -37,11 +37,12 @@ class Property:
 		if (callback):
 			callback(property)
 
-	def get(self, property):
+	def get(self, property, cached = False):
 		if (property not in self.__properties):
 			return None
 		p = self.__properties[property]
-		if (not p['valid'] or not p['value'] ):
+		if (cached): return p['value']
+		if (not p['valid']):
 			self.__update(p['callback'], property)
 		return p['value']
 

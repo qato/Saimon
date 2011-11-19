@@ -44,13 +44,18 @@ def calc_delta(curr, prev):
 
 def convert_values_to_byte(values):
 	result = {}
-	for (k,v) in values.iteritems():
-		if (type(v)==type('')): 
-			if (v[-3:]==' kB'):
-				v=int(v[0:-3])*1024
-			else:
-				if (type(v)==type('') and v.isdigit()):
-					v=int(v)
-		result[k]=v
+	if values:
+		for (k,v) in values.iteritems():
+			if (type(v)==type('')): 
+				if (v[-3:]==' kB'):
+					v=int(v[0:-3])*1024
+				else:
+					if (type(v)==type('') and v.isdigit()):
+						v=int(v)
+			result[k]=v
 	return result
 
+def copy_if_exist(dest, orig):
+	for k in dest.keys():
+		if k in orig: dest[k] = orig[k]
+			

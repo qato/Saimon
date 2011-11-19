@@ -26,6 +26,7 @@ class ProcessList:
 	__plist = {}
 	__pids = set()
 
+	# private methos
 	def __getProcByPid(self, pid):
 		proc = None
 		if self.__plist.has_key(pid):
@@ -35,13 +36,24 @@ class ProcessList:
 			self.__plist[pid] = proc
 		return proc
 
+	def __sort_process_by(self, keys):
+		sorted_plist = []
+		if self.__plist:
+			sorted_plist = [(k, v) for k, v in self.__plist.iteritems()]
+			for key in reversed(keys):
+				sorted_plist = sorted(sorted_plist, cmp=lambda x, y: cmp(x[1].get(key), y[1].get(key)), reverse=True)
+		return sorted_plist
+
+	# getter/setter
+	def getProcessList(self): return self.__plist
+	def getSortedProcessList(self, keys = ['cpu']): return self.__sort_process_by(keys)
 	def getPids(self): return self.__pids
 	def getProcessByPid(self, pid):
 		if self.__plist.has_key(pid):
 			return self.__plist[pid]
 		return None
 		
-	
+	# public methods
 	def update(self):
 		pids=set()
 

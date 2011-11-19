@@ -46,14 +46,17 @@ class FileWatcher:
 		self.__freader = ProcFileReader(fname)
 
 	def update(self):
-		self.__current_content = None
 		if (self.__freader.open()):
 			self.__previous = self.__current
 			self.__previous_content = self.__current_content
 			
 			self.__current_content = self.__freader.readAll()
 			
-			self.__values_invalid = True
+			if (self.__previous_content == self.__current_content and self.__previous):
+				self.__current = self.__previous
+				self.__values_invalid = False
+			else:
+				self.__values_invalid = True
 			self.__freader.close()
 			
 		
@@ -80,6 +83,9 @@ class FileWatcher:
 			return self.__previous
 		return self.__current
 
+	def isChanged(self):
+		return not(self.__previous_content == self.__current_content and self.__previous)
+	
 	def setLabel(self, lbl):
 		self.__label = lbl
 		
