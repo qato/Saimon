@@ -59,8 +59,7 @@ class Net:
 		v = flag & 0xC0
 		if (v==0x80): speed=1000
 		if (v==0x40): speed=100
-		result = (speed*1024*1024/8)
-		return result
+		return speed
 
 	def __get_net_features(self, i):
 		speed = 0
@@ -77,8 +76,8 @@ class Net:
 			speed = ethtools.ethtool_get_speed(device)
 		except IOError:
 			speed =  self.__get_net_features(device)
-		self.__net_speed[device] = speed
-		self.__net_speed_max += speed
+		self.__net_speed[device] = (speed*1024*1024/8)
+		self.__net_speed_max += self.__net_speed[device] 
 		
 	def __normalize(self, data):
 		result = {}

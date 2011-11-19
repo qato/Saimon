@@ -52,7 +52,7 @@ class FileWatcher:
 			
 			self.__current_content = self.__freader.readAll()
 			
-			if (self.__previous_content == self.__current_content and self.__previous):
+			if (not self.isChanged()):
 				self.__current = self.__previous
 				self.__values_invalid = False
 			else:
